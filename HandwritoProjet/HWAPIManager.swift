@@ -49,8 +49,8 @@ class HWAPIManager: NSObject {
     /// Get an array of font
     ///
     /// - parameters:
-    ///   - limit: the maximum number of font to fetch.
-    ///   - offset: the number of font to be skipped by the fetch
+    ///   - limit: number of items to fetch. defaults to 200 , minimum is 1 , maximum is 1000
+    ///   - offset: starting point in data set. defaults to 0
     ///   - onCompletion: a completion callback to handle the success or error result
     func getHandwritings(limit: Int, offset: Int, onCompletion: ServiceResponseGetFonts) {
         

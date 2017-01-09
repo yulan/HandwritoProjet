@@ -44,7 +44,7 @@ class ViewController: UIViewController {
         
         self.availableSections = [Section.HWType, Section.HWInputTextfield]
         
-        /// Call get font list WS
+        /// Get a font list (20 fonts) 
         HWAPIManager.sharedInstance.getHandwritings(20, offset: 0) { (fontList: [HWFontStruct]?, error: HWErrorStruct?) in
             guard error == nil else {
                 // An error occured display an error message
