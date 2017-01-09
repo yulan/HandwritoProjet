@@ -9,21 +9,18 @@ import Foundation
 import Alamofire // HTTP Requests
 import SwiftyJSON // JSON Parsing
 
-
-/// This represent an error in the process of getting a font.
-/// The error could be:
-/// - `RateLimitExceededError` for rate limit exceeded
-/// - `GenericError` for any other king of error
-enum HWFontError : ErrorType {
-    case GenericError
-    case RateLimitExceededError
+struct HWConfig {
+    /// The base API URL of handwriting.io
+    static let API_URL = "https://api.handwriting.io"
+    
+    /// The handwriting.io API Key and Secret (Expired Date: 02-02-2017)
+    static let API_KEY = "VQA0DC1SYQMFV0HZ"
+    static let API_SECRET = "V3C3TTH96S1WT6M7"
 }
 
-
 /// This is a type used by the call to get a font list. This is composed of an array of `HWFont` type if the operation succeed, and of a `HWFontError` in case of error
-typealias ServiceResponseGetFonts = ([HWFontStruct]?, HWFontError?) -> Void
-
-typealias ServiceResponseGetPNGImage = (UIImage?, HWFontError?) -> Void
+typealias ServiceResponseGetFonts = ([HWFontStruct]?, HWErrorStruct?) -> Void
+typealias ServiceResponseGetPNGImage = (UIImage?, HWErrorStruct?) -> Void
 
 class HWAPIManager: NSObject {
     
@@ -31,13 +28,14 @@ class HWAPIManager: NSObject {
     static let sharedInstance = HWAPIManager()
     /// Endpoint to render a handwrited text to a PNG image
     let GET_HANDWRITINGS_ENDPOINT = "/handwritings"
+    /// Endpoint to render a handwrited text to a PNG image
     let GET_RENDER_PNGIMAGE_ENDPOINT = "/render/png"
     
     /// Get the HTTP header required to call the Handwriting.io API
     ///
     /// - returns: An array of key-value for each header, containing the Authorization HTTP Header.
     private func getHTTPHeaderForAuthorization() -> [String: String] {
-        let loginString = NSString(format: "%@:%@", "VQA0DC1SYQMFV0HZ", "V3C3TTH96S1WT6M7")
+        let loginString = NSString(format: "%@:%@", HWConfig.API_KEY, HWConfig.API_SECRET)
         let loginData: NSData = loginString.dataUsingEncoding(NSUTF8StringEncoding)!
         let base64LoginString = loginData.base64EncodedStringWithOptions([])
         
@@ -57,7 +55,7 @@ class HWAPIManager: NSObject {
     func getHandwritings(limit: Int, offset: Int, onCompletion: ServiceResponseGetFonts) {
         
         // Define the URL endpoint
-        let requestUrl = "https://api.handwriting.io" + GET_HANDWRITINGS_ENDPOINT
+        let requestUrl = HWConfig.API_URL + GET_HANDWRITINGS_ENDPOINT
         
         // Build the array of parameters
         let params = [
@@ -82,10 +80,10 @@ class HWAPIManager: NSObject {
                 case .Failure(let error):
                     if let statusCode = error.userInfo["StatusCode"] as? Int {
                         if statusCode == 429 {
-                            onCompletion(nil, HWFontError.RateLimitExceededError)
+                            onCompletion(nil, HWErrorStruct.init(JSON: JSON(error).object))
                         }
                     }
-                    onCompletion(nil, HWFontError.GenericError)
+                    onCompletion(nil, HWErrorStruct.init(JSON: JSON(error).object))
                 }
                 
         }
@@ -94,15 +92,23 @@ class HWAPIManager: NSObject {
     /// Get an array of font
     ///
     /// - parameters:
-    ///   - limit: the maximum number of font to fetch.
-    ///   - offset: the number of font to be skipped by the fetch
+    ///   - handwriting_id: the maximum number of font to fetch.
+    ///   - text: the number of font to be skipped by the fetch
+    ///   - handwriting_size: the number of font to be skipped by the fetch
+    ///   - handwriting_color: the number of font to be skipped by the fetch
+    ///   - width: the number of font to be skipped by the fetch
+    ///   - height: the number of font to be skipped by the fetch
+    ///   - min_padding: the number of font to be skipped by the fetch
+    ///   - line_spacing: the number of font to be skipped by the fetch
+    ///   - word_spacing_variance: the number of font to be skipped by the fetch
+    ///   - random_seed: the number of font to be skipped by the fetch
     ///   - onCompletion: a completion callback to handle the success or error result
     func getRenderPNGImage(handwriting_id: String, text: String, handwriting_size: String, handwriting_color: String,
                            width: String, height: String, min_padding: String, line_spacing: Double,
                            word_spacing_variance: Double, random_seed: Int, onCompletion: ServiceResponseGetPNGImage) {
         
         // Define the URL endpoint
-        let requestUrl = "https://api.handwriting.io" + GET_RENDER_PNGIMAGE_ENDPOINT
+        let requestUrl = HWConfig.API_URL + GET_RENDER_PNGIMAGE_ENDPOINT
         
         // Build the array of parameters
         let params = [
@@ -126,11 +132,13 @@ class HWAPIManager: NSObject {
                     
                 case .Failure(let error):
                     if let statusCode = error.userInfo["StatusCode"] as? Int {
-                        if statusCode == 429 {
-                            onCompletion(nil, HWFontError.RateLimitExceededError)
+                        if statusCode == 400 {
+                            onCompletion(nil, HWErrorStruct.init(JSON: JSON(error).object))
+                        } else if statusCode == 429 {
+                            onCompletion(nil, HWErrorStruct.init(JSON: JSON(error).object))
                         }
                     }
-                    onCompletion(nil, HWFontError.GenericError)
+                    onCompletion(nil, HWErrorStruct.init(JSON: JSON(error).object))
                 }
                 
         }

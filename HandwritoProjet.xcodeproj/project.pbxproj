@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1CAAEB44106CABFD6E21FD44 /* Pods_HandwritoProjet.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DCC444268F3C6D028E488672 /* Pods_HandwritoProjet.framework */; };
+		722289E01E2313EF00D579D3 /* HWActivityIndicatorTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722289DF1E2313EF00D579D3 /* HWActivityIndicatorTableViewCell.swift */; };
+		722289E21E23194000D579D3 /* HWErrorStruct.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722289E11E23194000D579D3 /* HWErrorStruct.swift */; };
 		7272BC0E1E204E3B00BB283B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7272BC0D1E204E3B00BB283B /* AppDelegate.swift */; };
 		7272BC101E204E3B00BB283B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7272BC0F1E204E3B00BB283B /* ViewController.swift */; };
 		7272BC131E204E3B00BB283B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7272BC111E204E3B00BB283B /* Main.storyboard */; };
@@ -22,6 +24,8 @@
 
 /* Begin PBXFileReference section */
 		019A7544B5C2E2E9D0297DF7 /* Pods-HandwritoProjet.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HandwritoProjet.debug.xcconfig"; path = "Pods/Target Support Files/Pods-HandwritoProjet/Pods-HandwritoProjet.debug.xcconfig"; sourceTree = "<group>"; };
+		722289DF1E2313EF00D579D3 /* HWActivityIndicatorTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HWActivityIndicatorTableViewCell.swift; sourceTree = "<group>"; };
+		722289E11E23194000D579D3 /* HWErrorStruct.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HWErrorStruct.swift; sourceTree = "<group>"; };
 		7272BC0A1E204E3A00BB283B /* HandwritoProjet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = HandwritoProjet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7272BC0D1E204E3B00BB283B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7272BC0F1E204E3B00BB283B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -89,6 +93,7 @@
 				7272BC231E2189F600BB283B /* HWTypeTableViewCell.swift */,
 				7272BC251E218A7000BB283B /* HWTextFieldTableViewCell.swift */,
 				7272BC271E218C1300BB283B /* HWImageViewTableViewCell.swift */,
+				722289DF1E2313EF00D579D3 /* HWActivityIndicatorTableViewCell.swift */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -106,6 +111,7 @@
 			children = (
 				7272BC2D1E21C2AB00BB283B /* HWWritingNetworkModels.swift */,
 				7272BC2F1E21D05200BB283B /* HWAPIManager.swift */,
+				722289E11E23194000D579D3 /* HWErrorStruct.swift */,
 			);
 			name = model;
 			sourceTree = "<group>";
@@ -249,11 +255,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				722289E21E23194000D579D3 /* HWErrorStruct.swift in Sources */,
 				7272BC2E1E21C2AB00BB283B /* HWWritingNetworkModels.swift in Sources */,
 				7272BC281E218C1300BB283B /* HWImageViewTableViewCell.swift in Sources */,
 				7272BC261E218A7000BB283B /* HWTextFieldTableViewCell.swift in Sources */,
 				7272BC241E2189F600BB283B /* HWTypeTableViewCell.swift in Sources */,
 				7272BC101E204E3B00BB283B /* ViewController.swift in Sources */,
+				722289E01E2313EF00D579D3 /* HWActivityIndicatorTableViewCell.swift in Sources */,
 				7272BC0E1E204E3B00BB283B /* AppDelegate.swift in Sources */,
 				7272BC301E21D05200BB283B /* HWAPIManager.swift in Sources */,
 			);

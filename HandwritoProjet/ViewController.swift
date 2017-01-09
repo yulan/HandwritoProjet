@@ -20,9 +20,10 @@ class ViewController: UIViewController {
     // MARK: Cell Type
     
     private enum CellType: String {
-        case HWTypeTableViewCellID      =   "HWTypeTableViewCellID"
-        case HWTextFieldTableViewCellID =   "HWTextFieldTableViewCellID"
-        case HWImageViewTableViewCellID =   "HWImageViewTableViewCellID"
+        case HWTypeTableViewCellID              =   "HWTypeTableViewCellID"
+        case HWTextFieldTableViewCellID         =   "HWTextFieldTableViewCellID"
+        case HWImageViewTableViewCellID         =   "HWImageViewTableViewCellID"
+        case HWActivityIndicatorTableViewCellID =   "HWActivityIndicatorTableViewCellID"
     }
     
     // MARK: Sections
@@ -31,17 +32,7 @@ class ViewController: UIViewController {
         case HWType
         case HWInputTextfield
         case HWResultImageView
-        
-        var itemCount: Int {
-            switch self {
-            case .HWType :
-                return 1
-            case .HWInputTextfield:
-                return 1
-            case .HWResultImageView:
-                return 1
-            }
-        }
+        case HWActivityIndicator
     }
     
     private var availableSections: [Section] = []
@@ -53,7 +44,7 @@ class ViewController: UIViewController {
         
         self.availableSections = [Section.HWType, Section.HWInputTextfield]
         
-        HWAPIManager.sharedInstance.getHandwritings(20, offset: 0) { (fontList: [HWFontStruct]?, error: HWFontError?) in
+        HWAPIManager.sharedInstance.getHandwritings(20, offset: 0) { (fontList: [HWFontStruct]?, error: HWErrorStruct?) in
             guard error == nil else {
                 // An error occured display an error message
                 self.handleErrorFont(error!)
@@ -62,38 +53,19 @@ class ViewController: UIViewController {
             
             guard let fontList = fontList else { return }
             self.fontList = fontList
-            print("fontList \(fontList)")
             self.tableView.reloadData()
-            
-//            guard fontList != nil else {
-//                // If the render object is nil, An error occured display an error message
-//                self.showErrorAlert("An error occured")
-//                return
-//            }
-//            
-//            // Set the Data source
-//            self.fontDataSource = fontList!
-//            
-//            // Set the selected font as the first one
-//            if let firstFont = fontList?.first {
-//                self.selectedFontId = firstFont.id
-//            }
-//            
-//            for _font in fontList! {
-//                self.getFontNameStyleByItsOwnFont(_font)
-//            }
         }
-        
-        
-       
     }
     
     func callPngImageService() {
-        print("callPngImageService \(self.inputText)")
+            
+        self.availableSections = [Section.HWType, Section.HWInputTextfield, Section.HWActivityIndicator]
+        self.tableView.reloadData()
+        
         let fontId = self.fontList[self.fondIdChosen].id
         HWAPIManager.sharedInstance.getRenderPNGImage(fontId, text: self.inputText, handwriting_size: "", handwriting_color: "",
                                                       width: "", height: "", min_padding: "", line_spacing: 23,
-                                                      word_spacing_variance: 23, random_seed: 23) { (image: UIImage?, error: HWFontError?) in
+                                                      word_spacing_variance: 23, random_seed: 23) { (image: UIImage?, error: HWErrorStruct?) in
                                                         guard error == nil else {
                                                             // An error occured display an error message
                                                             self.handleErrorFont(error!)
@@ -104,61 +76,26 @@ class ViewController: UIViewController {
                                                         self.pngImage = image
                                                         self.availableSections = [Section.HWType, Section.HWInputTextfield, Section.HWResultImageView]
                                                         self.tableView.reloadData()
-                                                        
-                                                        //            guard fontList != nil else {
-                                                        //                // If the render object is nil, An error occured display an error message
-                                                        //                self.showErrorAlert("An error occured")
-                                                        //                return
-                                                        //            }
-                                                        //
-                                                        //            // Set the Data source
-                                                        //            self.fontDataSource = fontList!
-                                                        //
-                                                        //            // Set the selected font as the first one
-                                                        //            if let firstFont = fontList?.first {
-                                                        //                self.selectedFontId = firstFont.id
-                                                        //            }
-                                                        //
-                                                        //            for _font in fontList! {
-                                                        //                self.getFontNameStyleByItsOwnFont(_font)
-                                                        //            }
-        }
+                            }
+        
 
     }
-    
-//    /// Display an error message according to its type
-//    /// - parameters:
-//    ///   - error: The error to handle
-//    private func handleError(error: HWFontError) {
-//        var errorMessage = "An error occured"
-//        
-//        switch error {
-//        case .HWUnsupportedCharacterError:
-//            errorMessage = "You entered an unsupported character, please try again"
-//            break
-//        case .RateLimitExceededError:
-//            errorMessage = "Rate Limit Exceeded"
-//            break
-//        default:
-//            errorMessage = "An error occured"
-//        }
-//        
-//        self.showErrorAlert(errorMessage)
-//    }
-    
     
     /// Display an error message according to its type
     /// - parameters:
     ///   - error: The error to handle
-    private func handleErrorFont(error: HWFontError) {
+    private func handleErrorFont(errors: HWErrorStruct) {
         var errorMessage = "An error occured"
         
-        switch error {
-        case .RateLimitExceededError:
-            errorMessage = "Rate Limit Exceeded"
-            break
-        default:
-            errorMessage = "An error occured"
+        if errors.error != "" {
+            errorMessage = errors.error
+            if errors.field != "" {
+              errorMessage = "\(errorMessage)\n field: \(errors.field)"
+                
+                    for missingCharacter in errors.missingCharacters {
+                        errorMessage = "\(errorMessage)\n missing_characters: \(missingCharacter.positions)\n\(missingCharacter.character)\n\(missingCharacter.hex)\n\(missingCharacter.name)"
+                    }
+            }
         }
         
         self.showErrorAlert(errorMessage)
@@ -166,12 +103,13 @@ class ViewController: UIViewController {
 
     /// Show an error with the error message alert system
     /// - parameters:
-    ///   - errorMessage: The error message to show
+    ///  - errorMessage: The error message to show
     private func showErrorAlert(errorMessage: String) {
-        // Display an error message
-        //self.view.dodo.error(errorMessage)
+        let alertVC = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
+        let okButton = UIAlertAction.init(title: "OK", style: .Cancel, handler: nil)
+        alertVC.addAction(okButton)
+        presentViewController(alertVC, animated: true, completion: nil)
     }
-
 }
 
 extension ViewController : UITableViewDataSource {
@@ -211,7 +149,11 @@ extension ViewController : UITableViewDataSource {
             if let cell = cell as? HWImageViewTableViewCell {
                 cell.imageView?.image = self.pngImage
             }
+            
+        case .HWActivityIndicator:
+            cell = tableView.dequeueReusableCellWithIdentifier(CellType.HWActivityIndicatorTableViewCellID.rawValue, forIndexPath: indexPath)
         }
+        
         return cell
     }
     
@@ -227,15 +169,10 @@ extension ViewController: UITableViewDelegate {
     func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         return UITableViewAutomaticDimension
     }
-    
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-     
-    }
 }
 
 extension ViewController: HWTypeTableViewCellDelegate {
     func typeChosen(typeID: Int) {
-        print("type chose \(typeID)")
         self.fondIdChosen = typeID
     }
 }
@@ -243,11 +180,9 @@ extension ViewController: HWTypeTableViewCellDelegate {
 extension ViewController: HWTextFieldTableViewCellDelegate {
     func textFieldShouldReturn(text: String) {
         self.inputText = text
-        print("textFieldShouldReturn \(text)")
     }
     
     func textFieldDidEndEditing(text: String) {
         self.inputText = text
-        print("textFieldDidEndEditing \(text)")
     }
 }
