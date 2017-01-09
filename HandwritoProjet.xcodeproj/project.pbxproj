@@ -78,16 +78,17 @@
 				7272BC161E204E3B00BB283B /* LaunchScreen.storyboard */,
 				7272BC0D1E204E3B00BB283B /* AppDelegate.swift */,
 				7272BC111E204E3B00BB283B /* Main.storyboard */,
-				7272BC211E2177EB00BB283B /* viewController */,
-				7272BC1F1E21778200BB283B /* view */,
-				7272BC221E2177FE00BB283B /* model */,
+				7272BC211E2177EB00BB283B /* Controllers */,
+				7272BC1F1E21778200BB283B /* Views */,
+				7272BC221E2177FE00BB283B /* Models */,
+				9A37FDA51E23A2AF008857B1 /* APIManager */,
 				7272BC141E204E3B00BB283B /* Assets.xcassets */,
 				7272BC191E204E3B00BB283B /* Info.plist */,
 			);
 			path = HandwritoProjet;
 			sourceTree = "<group>";
 		};
-		7272BC1F1E21778200BB283B /* view */ = {
+		7272BC1F1E21778200BB283B /* Views */ = {
 			isa = PBXGroup;
 			children = (
 				7272BC231E2189F600BB283B /* HWTypeTableViewCell.swift */,
@@ -95,25 +96,32 @@
 				7272BC271E218C1300BB283B /* HWImageViewTableViewCell.swift */,
 				722289DF1E2313EF00D579D3 /* HWActivityIndicatorTableViewCell.swift */,
 			);
-			name = view;
+			name = Views;
 			sourceTree = "<group>";
 		};
-		7272BC211E2177EB00BB283B /* viewController */ = {
+		7272BC211E2177EB00BB283B /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
 				7272BC0F1E204E3B00BB283B /* ViewController.swift */,
 			);
-			name = viewController;
+			name = Controllers;
 			sourceTree = "<group>";
 		};
-		7272BC221E2177FE00BB283B /* model */ = {
+		7272BC221E2177FE00BB283B /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				7272BC2D1E21C2AB00BB283B /* HWWritingNetworkModels.swift */,
-				7272BC2F1E21D05200BB283B /* HWAPIManager.swift */,
 				722289E11E23194000D579D3 /* HWErrorStruct.swift */,
 			);
-			name = model;
+			name = Models;
+			sourceTree = "<group>";
+		};
+		9A37FDA51E23A2AF008857B1 /* APIManager */ = {
+			isa = PBXGroup;
+			children = (
+				7272BC2F1E21D05200BB283B /* HWAPIManager.swift */,
+			);
+			name = APIManager;
 			sourceTree = "<group>";
 		};
 		D60B5466DF0B57D97281599B /* Pods */ = {
