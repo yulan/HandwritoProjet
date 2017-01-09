@@ -124,9 +124,7 @@ class HWAPIManager: NSObject {
         // Build the array of parameters
         let params = [
             "handwriting_id" : handwriting_id,
-            "text": text,
-            "width": "560px",
-            "height": "203px"
+            "text": text
             ]
         
         // Automatically validates status code within 200...299 range, and that the Content-Type header of the response matches the Accept header of the request

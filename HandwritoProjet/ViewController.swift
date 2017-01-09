@@ -87,8 +87,6 @@ class ViewController: UIViewController {
     /// - parameters:
     ///   - error: The error to handle
     private func handleErrorFont(errors: HWErrorStruct) {
-        self.availableSections = [Section.HWType, Section.HWInputTextfield]
-        self.tableView.reloadData()
         
         var errorMessage = "An error occured"
         if errors.error != "" {
@@ -110,10 +108,16 @@ class ViewController: UIViewController {
     /// - parameters:
     ///  - errorMessage: The error message to show
     private func showErrorAlert(errorMessage: String) {
-        let alertVC = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
-        let okButton = UIAlertAction.init(title: "OK", style: .Cancel, handler: nil)
-        alertVC.addAction(okButton)
-        presentViewController(alertVC, animated: true, completion: nil)
+        
+        if self.presentedViewController == nil {
+            let alertVC = UIAlertController(title: "Error", message: errorMessage, preferredStyle: .Alert)
+            let okButton = UIAlertAction.init(title: "OK", style: .Default, handler: nil)
+            alertVC.addAction(okButton)
+            self.presentViewController(alertVC, animated: true, completion: {
+                self.availableSections = [Section.HWType, Section.HWInputTextfield]
+                self.tableView.reloadData()
+            })
+        }
     }
 }
 
@@ -168,11 +172,17 @@ extension ViewController: UITableViewDelegate {
     // MARK: - UITableViewDelegate
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
-    }
-    
-    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return UITableViewAutomaticDimension
+        
+        let section = self.availableSections[indexPath.section]
+        
+        switch section {
+        case .HWType:
+            return 160
+        case .HWResultImageView:
+            return 250
+        default:
+            return UITableViewAutomaticDimension
+        }
     }
 }
 
