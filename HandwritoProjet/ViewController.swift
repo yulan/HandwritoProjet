@@ -44,6 +44,7 @@ class ViewController: UIViewController {
         
         self.availableSections = [Section.HWType, Section.HWInputTextfield]
         
+        /// Call get font list WS
         HWAPIManager.sharedInstance.getHandwritings(20, offset: 0) { (fontList: [HWFontStruct]?, error: HWErrorStruct?) in
             guard error == nil else {
                 // An error occured display an error message
@@ -57,6 +58,7 @@ class ViewController: UIViewController {
         }
     }
     
+    /// Call get png image WS
     func callPngImageService() {
             
         self.availableSections = [Section.HWType, Section.HWInputTextfield, Section.HWActivityIndicator]
@@ -85,8 +87,10 @@ class ViewController: UIViewController {
     /// - parameters:
     ///   - error: The error to handle
     private func handleErrorFont(errors: HWErrorStruct) {
-        var errorMessage = "An error occured"
+        self.availableSections = [Section.HWType, Section.HWInputTextfield]
+        self.tableView.reloadData()
         
+        var errorMessage = "An error occured"
         if errors.error != "" {
             errorMessage = errors.error
             if errors.field != "" {
@@ -99,6 +103,7 @@ class ViewController: UIViewController {
         }
         
         self.showErrorAlert(errorMessage)
+        
     }
 
     /// Show an error with the error message alert system
@@ -172,12 +177,15 @@ extension ViewController: UITableViewDelegate {
 }
 
 extension ViewController: HWTypeTableViewCellDelegate {
+    // MARK: - HWTypeTableViewCellDelegate
+    
     func typeChosen(typeID: Int) {
         self.fondIdChosen = typeID
     }
 }
 
 extension ViewController: HWTextFieldTableViewCellDelegate {
+    // MARK: - HWTextFieldTableViewCellDelegate
     func textFieldShouldReturn(text: String) {
         self.inputText = text
     }
