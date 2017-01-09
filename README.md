@@ -41,6 +41,7 @@ Dependencies are managed by CocoaPods. This project uses the following:
 - [ ] Localize
 - [ ] Choose font size
 - [ ] Choose font color
+- [ ] Validator input text
 - [ ] Save or delete png image local
 - [ ] App Icon
 - [ ] Launch Screen
