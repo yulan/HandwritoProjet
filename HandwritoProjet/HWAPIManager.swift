@@ -23,12 +23,15 @@ enum HWFontError : ErrorType {
 /// This is a type used by the call to get a font list. This is composed of an array of `HWFont` type if the operation succeed, and of a `HWFontError` in case of error
 typealias ServiceResponseGetFonts = ([HWFontStruct]?, HWFontError?) -> Void
 
+typealias ServiceResponseGetPNGImage = (UIImage?, HWFontError?) -> Void
+
 class HWAPIManager: NSObject {
     
     /// Singleton
     static let sharedInstance = HWAPIManager()
     /// Endpoint to render a handwrited text to a PNG image
     let GET_HANDWRITINGS_ENDPOINT = "/handwritings"
+    let GET_RENDER_PNGIMAGE_ENDPOINT = "/render/png"
     
     /// Get the HTTP header required to call the Handwriting.io API
     ///
@@ -95,31 +98,31 @@ class HWAPIManager: NSObject {
     ///   - offset: the number of font to be skipped by the fetch
     ///   - onCompletion: a completion callback to handle the success or error result
     func getRenderPNGImage(handwriting_id: String, text: String, handwriting_size: String, handwriting_color: String,
-                           width: String, height: String, min_padding: String, line_spacing: double,
-                           word_spacing_variance: double, random_seed: int, onCompletion: ServiceResponseGetFonts) {
+                           width: String, height: String, min_padding: String, line_spacing: Double,
+                           word_spacing_variance: Double, random_seed: Int, onCompletion: ServiceResponseGetPNGImage) {
         
         // Define the URL endpoint
-        let requestUrl = "https://api.handwriting.io" + GET_HANDWRITINGS_ENDPOINT
+        let requestUrl = "https://api.handwriting.io" + GET_RENDER_PNGIMAGE_ENDPOINT
         
         // Build the array of parameters
         let params = [
-            "limit" : limit,
-            "offset": offset,
+            "handwriting_id" : handwriting_id,
+            "text": text,
+            "width": "560px",
+            "height": "203px"
             ]
         
         // Automatically validates status code within 200...299 range, and that the Content-Type header of the response matches the Accept header of the request
         Alamofire.request(.GET, requestUrl, parameters: params, encoding: .URLEncodedInURL, headers: self.getHTTPHeaderForAuthorization())
             .validate() // Test the response is between 200 and 299
-            .responseJSON { response in
+            .responseData { response in
                 
                 // If success, execute onCompletion callback with an array of HWFontStruct Model
                 // If failed, execute onCompletion callback with an HWHandwriteError error
                 switch response.result {
                 case .Success(let data):
-                    // Get a JSON Object from the data
-                    let json = JSON(data)
-                    let fontsList = HWFontStruct.fontDateStructsFromJson(JSON: json.object)
-                    onCompletion(fontsList, nil)
+                    let image = UIImage(data: data, scale: 1.0)!
+                    onCompletion(image, nil)
                     
                 case .Failure(let error):
                     if let statusCode = error.userInfo["StatusCode"] as? Int {

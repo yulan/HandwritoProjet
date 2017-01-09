@@ -19,12 +19,20 @@ class HWTextFieldTableViewCell: UITableViewCell {
 
     @IBOutlet weak var titleLabel: UILabel!
     @IBOutlet weak var textField: UITextField!
+    @IBOutlet weak var button: UIButton!
+    
+    var action: (() -> Void)?
     
     weak var delegate: HWTextFieldTableViewCellDelegate?
     
     override func awakeFromNib() {
         super.awakeFromNib()
         self.textField.delegate = self
+    }
+    
+    @IBAction func buttonPushed() {
+        self.textField.resignFirstResponder()
+        self.action?()
     }
 }
 
